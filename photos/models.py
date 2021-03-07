@@ -29,3 +29,18 @@ class Like(models.Model):
     class Meta:
         verbose_name = 'like'
         verbose_name_plural = 'likes'
+
+
+class Comment(models.Model):
+    user = models.ForeignKey('users.User', verbose_name='user', related_name='comments', on_delete=models.CASCADE)
+    photo = models.ForeignKey('photos.Photo', verbose_name='user', related_name='comments', on_delete=models.CASCADE)
+    comment = models.CharField('comment', max_length=300, blank=True, null=True)
+    created_at = models.DateTimeField('created at', auto_now_add=True)
+    updated_at = models.DateTimeField('updated at', auto_now=True)
+
+    def __str__(self):
+        return f'{self.user} - {self.photo}'
+
+    class Meta:
+        verbose_name = 'comment'
+        verbose_name_plural = 'comments'

@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from gallery.settings import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
-from photos.models import Photo, Like
+from photos.models import Photo, Like, Comment
 from photos.s3 import save_to_s3
 from photos.serializers import PhotoSerializer, LikeSerializer
 
@@ -39,7 +39,7 @@ class PhotoModelViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=['post'])
-    def to_approve(self, request, pk=None):
+    def approve(self, request, pk=None):
         if not self.request.user.is_staff:
             return Response('Sorry, you can\'t approve this photo.', status=status.HTTP_401_UNAUTHORIZED)
         photo = self.get_object()
@@ -55,6 +55,14 @@ class PhotoModelViewSet(viewsets.ModelViewSet):
         serializer = PhotoSerializer(photo)
         return Response(serializer.data)
 
+    @action(detail=True, methods=['post'])
+    def comment(self, request, pk=None):
+        photo = self.get_object()
+        comment = request.data.get('comment')
+        Comment.objects.create(user=request.user, photo=photo, comment=comment)
+        serializer = PhotoSerializer(photo)
+        return Response(serializer.data)
+
     @action(detail=False, methods=['get'])
     def already_approved(self, request, pk=None):
         photos = Photo.objects.filter(is_approved=True)
@@ -66,9 +74,3 @@ class PhotoModelViewSet(viewsets.ModelViewSet):
         photos = Photo.objects.filter(is_approved=False)
         serializer = PhotoSerializer(photos, many=True)
         return Response(serializer.data)
-
-
-class LikeModelViewSet(viewsets.ModelViewSet):
-    queryset = Like.objects.all()
-    serializer_class = LikeSerializer
-    permission_classes = (IsAuthenticated,)

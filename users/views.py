@@ -4,8 +4,8 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from photos.models import Like
-from photos.serializers import LikeSerializer
+from photos.models import Like, Comment
+from photos.serializers import LikeSerializer, MyCommentSerializer
 from users.models import User
 from users.serializers import UserSerializer, RegisterSerializer, SignInSerializer
 
@@ -26,6 +26,12 @@ class UserModelViewSet(mixins.ListModelMixin,
     def likes(self, request, pk=None):
         likes = Like.objects.filter(user=self.request.user)
         serializer = LikeSerializer(likes, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['get'])
+    def comments(self, request, pk=None):
+        comments = Comment.objects.filter(user=self.request.user)
+        serializer = MyCommentSerializer(comments, many=True)
         return Response(serializer.data)
 
 
