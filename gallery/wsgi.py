@@ -1,5 +1,5 @@
 """
-WSGI config for galery project.
+WSGI config for gallery project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -12,6 +12,6 @@ import os
 from django.core.wsgi import get_wsgi_application
 from dj_static import Cling
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'galery.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'gallery.settings')
 
 application = Cling(get_wsgi_application())
