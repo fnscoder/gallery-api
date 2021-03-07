@@ -10,8 +10,22 @@ class Photo(models.Model):
     updated_at = models.DateTimeField('updated at', auto_now=True)
 
     def __str__(self):
-        return f'{self.photo_url}'
+        return f'{self.id} - {self.photo_url}'
 
     class Meta:
         verbose_name = 'photo'
         verbose_name_plural = 'photos'
+
+
+class Like(models.Model):
+    user = models.ForeignKey('users.User', verbose_name='user', related_name='likes', on_delete=models.CASCADE)
+    photo = models.ForeignKey('photos.Photo', verbose_name='user', related_name='likes', on_delete=models.CASCADE)
+    created_at = models.DateTimeField('created at', auto_now_add=True)
+    updated_at = models.DateTimeField('updated at', auto_now=True)
+
+    def __str__(self):
+        return f'{self.user} - {self.photo}'
+
+    class Meta:
+        verbose_name = 'like'
+        verbose_name_plural = 'likes'
