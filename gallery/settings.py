@@ -85,13 +85,16 @@ WSGI_APPLICATION = 'gallery.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
+MONGODB_USER = config('MONGODB_USER')
+MONGODB_PASSWORD = config('MONGODB_PASSWORD')
+MONGODB_HOST = config('MONGODB_HOST')
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'gallery_db',
-        'HOST': '127.0.0.1',
-        'PORT': 27017,
+        'CLIENT': {
+            'host': f'mongodb+srv://{MONGODB_USER}:{MONGODB_PASSWORD}@{MONGODB_HOST}',
+        }
     }
 }
 
@@ -157,8 +160,4 @@ AWS_DEFAULT_ACL = 'public-read'
 DEFAULT_FILE_STORAGE = 'gallery.storage.MediaStorage'
 
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000',
-    'http://localhost:8000',
-    'http://localhost:8081',
-]
+CORS_ORIGIN_WHITELIST = config('CORS_ORIGIN_WHITELIST', default=['*'], cast=Csv())

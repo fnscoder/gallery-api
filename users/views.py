@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from photos.models import Like, Comment
 from photos.serializers import LikeSerializer, MyCommentSerializer
@@ -54,3 +55,11 @@ class SignInAPIView(CreateAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         return Response(self.get_serializer(user).data)
+
+
+class ProfileView(APIView):
+    def get(self, request):
+        if request.user.is_authenticated:
+            serializer = UserSerializer(request.user)
+            return Response(serializer.data)
+        return Response()
